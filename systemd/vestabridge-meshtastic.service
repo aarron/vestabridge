@@ -1,0 +1,20 @@
+[Unit]
+Description=VestaBridge Meshtastic listener (LoRa -> Vestaboard)
+# Wait for the USB serial device to appear (see README for the udev symlink).
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+Group=dialout
+WorkingDirectory=/opt/vestabridge
+ExecStart=/opt/vestabridge/.venv/bin/python -m vestabridge.meshtastic_listener
+Restart=always
+RestartSec=5
+# Surface logs in journald as well as the rotating file.
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

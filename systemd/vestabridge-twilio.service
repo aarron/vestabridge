@@ -1,0 +1,19 @@
+[Unit]
+Description=VestaBridge Twilio SMS webhook (SMS -> Vestaboard)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/opt/vestabridge
+# gunicorn reads FLASK_PORT from .env via the app, but bind explicitly here so
+# the listen address is unambiguous. Keep this port in sync with FLASK_PORT.
+ExecStart=/opt/vestabridge/.venv/bin/gunicorn --workers 2 --bind 127.0.0.1:5000 vestabridge.twilio_webhook:app
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
