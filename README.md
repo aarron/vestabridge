@@ -177,16 +177,24 @@ The units assume the install path `/opt/vestabridge`, user `pi`, and the venv at
 
 ---
 
-## 5. Get the Vestaboard Local API token
+## 5. Get the Vestaboard Local API key
 
-The Local API runs on the Vestaboard itself over your LAN — no cloud
-subscription required — but must be enabled once.
+The Local API runs on the Vestaboard itself over your LAN — no cloud or
+subscription needed — but it must be enabled once, and the key isn't the one
+most people find first.
+
+> **⚠️ Cloud API vs Local API — don't mix them up.** The Vestaboard app's
+> *Settings → API* screen issues a **Cloud Read/Write token** (`rw.vestaboard.com`,
+> needs internet). That's a *different* API — the Local endpoint rejects it with
+> `Local API is not enabled` (and returns HTTP 401/201, which is easy to misread
+> as success). This project needs the **Local API** key (LAN-only); the off-grid
+> path depends on it.
 
 1. **Request enablement:** go to <https://www.vestaboard.com/local-api> and
-   submit the enablement-token request form. Your board must be paired and on
-   current firmware. Vestaboard emails you an **enablement token**.
-2. **Enable the API** by POSTing that token to the board (replace the host with
-   your board's IP if `vestaboard.local` doesn't resolve):
+   submit the enablement request for your board. The board's **owner is emailed
+   an enablement token** after a short review (not instant — it can take a while).
+2. **Enable the API** by POSTing that enablement token to the board (use the
+   board's LAN IP if `vestaboard.local` doesn't resolve):
 
    ```bash
    curl -X POST \
@@ -194,13 +202,20 @@ subscription required — but must be enabled once.
      http://vestaboard.local:7000/local-api/enablement
    ```
 
-3. The response contains an **`apiKey`**. This is your permanent Local API key.
-   Put it in `.env` as `VESTABOARD_API_TOKEN`. Find the board's IP from your
-   router (and set a DHCP reservation) for `VESTABOARD_LOCAL_IP`.
+   A success looks like:
+
+   ```json
+   {"message":"Local API enabled","apiKey":"…"}
+   ```
+
+3. Put that **`apiKey`** (the value returned above — *not* the enablement token)
+   in `.env` as `VESTABOARD_API_TOKEN`, and the board's LAN IP in
+   `VESTABOARD_LOCAL_IP` (set a DHCP reservation so it doesn't move).
 
 Messages are sent as a 6×22 array of Vestaboard character codes to
-`http://<ip>:7000/local-api/message` with header `X-Vestaboard-Local-Api-Key`.
-VestaBridge handles all of the encoding for you.
+`http://<ip>:7000/local-api/message` with header `X-Vestaboard-Local-Api-Key`; a
+successful post returns **HTTP 201** (empty body). VestaBridge handles all of the
+character encoding for you.
 
 ---
 
