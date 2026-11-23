@@ -1,8 +1,25 @@
 # VestaBridge
 
+VestaBridge lets people send messages to a [Vestaboard](https://www.vestaboard.com/)
+at home, even when the internet is down.
+
+A Vestaboard is a wall-mounted split-flap display, like the clattering letter boards
+once found in train stations, that shows short messages in six rows of 22 characters.
+It normally gets its messages over the internet. VestaBridge adds two more ways in:
+
+- **By text message:** send an ordinary SMS to a phone number, and it appears on the board.
+- **By off-grid radio:** [Meshtastic](https://meshtastic.org) is an open-source system for
+  sending text messages over long-range, low-power radio, with no cell service or internet
+  needed. Messages sent on the local radio mesh reach the board too, so it keeps working
+  during an outage.
+
+All of it runs on a Raspberry Pi Zero 2 W, a computer about the size of a stick of gum,
+on the home network.
+
+## How it works
+
 A home message-display bridge for a Raspberry Pi Zero 2 W. It relays incoming
-messages to a [Vestaboard](https://www.vestaboard.com/) split-flap display from
-two independent sources:
+messages to the Vestaboard from two independent sources:
 
 - **Meshtastic (off-grid):** text messages received over the LoRa mesh via a
   USB-connected Heltec node. Works with **no internet**.
